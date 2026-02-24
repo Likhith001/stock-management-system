@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Create Sale</h2>
+<hr>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Available</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {{ product.name }}
+                    <input type="hidden" name="product" value="{{ product.id }}">
+                </td>
+                <td>{{ product.quantity }}</td>
+                <td>
+                    <input type="number" name="quantity" class="form-control" min="0" value="0">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Complete Sale</button>
+</form>
+
+{% endblock %}

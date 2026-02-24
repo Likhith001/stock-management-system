@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+<hr>
+
+<div class="row mb-4">
+
+    <!-- Total Revenue -->
+    <div class="col-md-3">
+        <div class="card p-3 bg-success text-white">
+            <h5>Total Revenue</h5>
+            <h3>₹{{ total_revenue }}</h3>
+        </div>
+    </div>
+
+    <!-- Total Sales -->
+    <div class="col-md-3">
+        <div class="card p-3 bg-primary text-white">
+            <h5>Total Sales</h5>
+            <h3>{{ total_sales }}</h3>
+        </div>
+    </div>
+
+    <!-- Low Stock -->
+    <div class="col-md-3">
+        <div class="card p-3 bg-danger text-white">
+            <h5>Low Stock</h5>
+            <h3>{{ low_stock }}</h3>
+        </div>
+    </div>
+
+    <!-- Total Profit (Admin Only) -->
+    {% if user.is_superuser %}
+    <div class="col-md-3">
+        <div class="card p-3 bg-dark text-white">
+            <h5>Total Profit</h5>
+            <h3>₹{{ total_profit }}</h3>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+
+<div class="row mt-4">
+
+    <!-- Monthly Revenue -->
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Monthly Revenue</h5>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Monthly Profit (Admin Only) -->
+    {% if user.is_superuser %}
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Monthly Profit</h5>
+            <canvas id="profitChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+
+<div class="row mt-4">
+
+    <!-- Stock Status -->
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Stock Status</h5>
+            <canvas id="stockChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Monthly Revenue Chart
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: {{ revenue_months|safe }},
+            datasets: [{
+                label: 'Monthly Revenue',
+                data: {{ revenue_totals|safe }},
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78,115,223,0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        }
+    });
+
+    // Monthly Profit Chart (Admin Only)
+    {% if user.is_superuser %}
+    new Chart(document.getElementById('profitChart'), {
+        type: 'line',
+        data: {
+            labels: {{ profit_months|safe }},
+            datasets: [{
+                label: 'Monthly Profit',
+                data: {{ profit_totals|safe }},
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40,167,69,0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        }
+    });
+    {% endif %}
+
+    // Stock Status Pie Chart
+    new Chart(document.getElementById('stockChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Low Stock', 'In Stock'],
+            datasets: [{
+                data: [{{ low_stock }}, {{ in_stock }}],
+                backgroundColor: ['#ff6384', '#36a2eb']
+            }]
+        }
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Sales</h2>
+<hr>
+
+<a href="{% url 'create_sale' %}" class="btn btn-primary mb-3">New Sale</a>
+
+{% if user.is_superuser %}
+<a href="{% url 'export_sales' %}" class="btn btn-success mb-3">
+    <i class="fas fa-file-csv"></i> Export Sales CSV
+</a>
+{% endif %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>
+                <a href="{% url 'sale_detail' sale.id %}">
+                    #{{ sale.id }}
+                 </a>
+            </td>
+            <td>{{ sale.created_at }}</td>
+            <td>₹{{ sale.total_amount }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

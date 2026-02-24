@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Invoice - Sale #{{ sale.id }}</h2>
+<hr>
+
+<p><strong>Date:</strong> {{ sale.created_at }}</p>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in sale.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.price }}</td>
+            <td>₹{{ item.get_total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="text-end">Grand Total: ₹{{ sale.total_amount }}</h4>
+
+<button onclick="window.print()" class="btn btn-primary mt-3">
+    Print Invoice
+</button>
+
+{% endblock %}
